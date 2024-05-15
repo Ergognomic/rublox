@@ -36,7 +36,6 @@ class Scanner
       @start = @current
       scan_token
     end
-    puts @line
     @tokens.push(Token.new(:EOF, '', nil, @line))
   end
 

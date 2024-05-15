@@ -3,6 +3,8 @@
 # Main file, handles running things
 
 require_relative 'scanner'
+require_relative 'parser'
+require_relative 'ast_printer'
 
 $hadError = false
 
@@ -26,10 +28,13 @@ end
 def run(source)
   scanner = Scanner.new(source)
   tokens = scanner.scan_tokens
+  parser = Parser.new(tokens)
+  expression = parser.parse
 
-  tokens.each do |token|
-    puts token.to_string
-  end
+  # Stop if there was a syntax error
+  return if $hadError
+
+  puts AstPrinter.new.print expression
 end
 
 def error(line, message)
@@ -39,6 +44,14 @@ end
 def report(line, where, message)
   warn "[line #{line}] Error#{where}: #{message}"
   $hadError = true
+end
+
+def parse_error(token, message)
+  if token.type == :EOF
+    report(token.line, 'at end', message)
+  else
+    report(token.line, " at '#{token.lexeme}'", message)
+  end
 end
 
 if __FILE__ == $PROGRAM_NAME
