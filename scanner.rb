@@ -36,6 +36,7 @@ class Scanner
       @start = @current
       scan_token
     end
+    puts @line
     @tokens.push(Token.new(:EOF, '', nil, @line))
   end
 
@@ -86,11 +87,11 @@ class Scanner
       add_token(match('=') ? :GREATER_EQUAL : :GREATER)
     when '/'
       if match '/'
-        chomp while peek != '\n' && !at_end?
+        chomp while peek != "\n" && !at_end?
       else
         add_token :SLASH
       end
-    when '\n'
+    when "\n"
       @line += 1
     when '"'
       scan_string
@@ -122,7 +123,7 @@ class Scanner
 
   def scan_string
     until peek == '"' || at_end?
-      line += 1 if peek == '\n'
+      @line += 1 if peek == "\n"
       chomp
     end
     if at_end?
@@ -134,6 +135,7 @@ class Scanner
     add_token(:STRING, value)
   end
 
+  # Looks ahead one character and consumes it if it matches the expected
   def match(expected)
     return false if at_end?
     return false if @source[@current] != expected
@@ -144,7 +146,6 @@ class Scanner
 
   # Looks ahead one character and returns nil if there's nothing there
   def peek
-    # Fun fact: '\0'.match(/\0/) returns false :)
     return nil if at_end?
 
     @source[@current]

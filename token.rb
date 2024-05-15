@@ -2,6 +2,8 @@
 
 # Lox token
 class Token
+  attr_accessor :type, :lexeme, :literal, :line
+
   def initialize(type, lexeme, literal, line)
     @type = type # token type
     @lexeme = lexeme # string

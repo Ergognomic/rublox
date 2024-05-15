@@ -43,7 +43,7 @@ end
 
 if __FILE__ == $PROGRAM_NAME
   if ARGV.length > 1
-    puts 'Usage: rlox [script]'
+    warn 'Usage: rlox [script]'
     exit 64
   elsif ARGV.length == 1
     run_file ARGV[0]
