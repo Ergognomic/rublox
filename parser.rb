@@ -63,6 +63,7 @@ class Parser
       right = unary
       expr = Binary.new(expr, operator, right)
     end
+
     expr
   end
 
