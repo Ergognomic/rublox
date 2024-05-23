@@ -2,6 +2,8 @@
 
 # Lox runtime error class
 class LoxRuntimeError < RuntimeError
+  attr_accessor :token
+
   def initialize(token, message)
     super(message)
     @token = token

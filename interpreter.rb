@@ -1,9 +1,25 @@
 # frozen_string_literal: true
 
 require_relative 'expr'
+require_relative 'runtime_error'
+require_relative 'lox'
 
 # Lox interpreter class
 class Interpreter < Visitor
+  def interpret(expr)
+    value = evaluate(expr)
+    puts stringify(value)
+  rescue LoxRuntimeError => e
+    runtime_error e
+  end
+
+  def stringify(object)
+    return 'nil' if object.nil?
+    return object.to_s.chomp('.0') if object.is_a? Float
+
+    object.to_s
+  end
+
   def visit_literal_expr(expr)
     expr.value
   end
@@ -22,11 +38,11 @@ class Interpreter < Visitor
   end
 
   def check_number_operand(operator, operand)
-    LoxRuntimeError.new(operator, 'Operand must be a number.') unless operand.is_a? Float
+    raise LoxRuntimeError.new(operator, 'Operand must be a number.') unless operand.is_a? Float
   end
 
   def check_number_operands(operator, left, right)
-    LoxRuntimeError.new(operator, 'Operands must be numbers.') unless left.is_a?(Float) && right.is_a?(Float)
+    raise LoxRuntimeError.new(operator, 'Operands must be numbers.') unless left.is_a?(Float) && right.is_a?(Float)
   end
 
   def truthy?(object)
@@ -49,7 +65,7 @@ class Interpreter < Visitor
     right = evaluate expr.right
     case expr.operator.type
     when :PLUS
-      return LoxRuntimeError.new(expr.operator, 'Operands must be two numbers or two strings.') unless
+      raise LoxRuntimeError.new(expr.operator, 'Operands must be two numbers or two strings.') unless
       (left.is_a?(String) && right.is_a?(String)) || (left.is_a?(Float) && right.is_a?(Float))
 
       return left + right

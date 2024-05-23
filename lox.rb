@@ -5,13 +5,17 @@
 require_relative 'scanner'
 require_relative 'parser'
 require_relative 'ast_printer'
+require_relative 'interpreter'
 
-$hadError = false
+$interpreter = Interpreter.new
+$had_error = false
+$had_runtime_error = false
 
 def run_file(path)
   file = File.open(path).read
   run file
-  exit 65 if $hadError
+  exit 65 if $had_error
+  exit 70 if $had_runtime_error
 end
 
 def run_prompt
@@ -21,7 +25,7 @@ def run_prompt
     break if line.downcase == 'exit'
 
     run line
-    $hadError = false
+    $had_error = false
   end
 end
 
@@ -32,18 +36,23 @@ def run(source)
   expression = parser.parse
 
   # Stop if there was a syntax error
-  return if $hadError
+  return if $had_error
 
-  puts AstPrinter.new.print expression
+  $interpreter.interpret expression
 end
 
 def error(line, message)
   report(line, '', message)
 end
 
+def runtime_error(error)
+  warn "#{error.message}\n[line #{error.token.line}]"
+  $had_runtime_error = true
+end
+
 def report(line, where, message)
   warn "[line #{line}] Error#{where}: #{message}"
-  $hadError = true
+  $had_error = true
 end
 
 def parse_error(token, message)
