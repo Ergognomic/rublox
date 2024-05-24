@@ -43,7 +43,7 @@ end
 
 def define_type(file, base_name, class_name, attr_list)
   file.puts
-  file.puts "# Represents #{class_name.downcase} expression nodes in the AST"
+  file.puts "# Represents #{class_name.downcase} #{base_name} nodes in the AST"
   file.puts "class #{class_name} < #{base_name.capitalize}"
   attrs = attr_list.split(', ').map { |str| ":#{str}" }.join(', ')
   file.puts "  attr_accessor #{attrs}"
@@ -76,5 +76,10 @@ if __FILE__ == $PROGRAM_NAME
                'Grouping : expression',
                'Literal  : value',
                'Unary    : operator, right'
+             ])
+
+  define_ast(output_directory, 'stmt', [
+               'Expression : expression',
+               'Print      : expression'
              ])
 end

@@ -43,7 +43,7 @@ class Scanner
     @current >= @source.length
   end
 
-  def chomp
+  def advance
     @current += 1
     @source[@current - 1]
   end
@@ -54,7 +54,7 @@ class Scanner
   end
 
   def scan_token
-    c = chomp
+    c = advance
     case c
     when '('
       add_token :LEFT_PAREN
@@ -86,7 +86,7 @@ class Scanner
       add_token(match('=') ? :GREATER_EQUAL : :GREATER)
     when '/'
       if match '/'
-        chomp while peek != "\n" && !at_end?
+        advance while peek != "\n" && !at_end?
       else
         add_token :SLASH
       end
@@ -104,7 +104,7 @@ class Scanner
   end
 
   def scan_identifier
-    chomp while peek&.match?(/[a-zA-Z_0-9]/)
+    advance while peek&.match?(/[a-zA-Z_0-9]/)
     text = @source[@start...@current]
     type = @@keywords[text]
     type = :IDENTIFIER if type.nil?
@@ -112,10 +112,10 @@ class Scanner
   end
 
   def scan_number
-    chomp while peek&.match?(/\d/)
+    advance while peek&.match?(/\d/)
     if peek && peek == '.' && peek_next&.match?(/\d/)
-      chomp
-      chomp while peek&.match?(/\d/)
+      advance
+      advance while peek&.match?(/\d/)
     end
     add_token(:NUMBER, @source[@start...@current].to_f)
   end
@@ -123,13 +123,13 @@ class Scanner
   def scan_string
     until peek == '"' || at_end?
       @line += 1 if peek == "\n"
-      chomp
+      advance
     end
     if at_end?
       error(@line, 'Unterminated string.')
       return
     end
-    chomp
+    advance
     value = @source[(@start + 1)...(@current - 1)]
     add_token(:STRING, value)
   end

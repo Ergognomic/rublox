@@ -1,0 +1,5 @@
+print "one";        // one
+print true;         // true
+print 2 + 1;        // 3
+print 3 + true;     // error
+print "420" + "69";  // doesn't print due to previous error

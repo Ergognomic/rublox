@@ -35,7 +35,7 @@ class Expr
   end
 end
 
-# Represents binary expression nodes in the AST
+# Represents binary expr nodes in the AST
 class Binary < Expr
   attr_accessor :left, :operator, :right
 
@@ -51,7 +51,7 @@ class Binary < Expr
   end
 end
 
-# Represents grouping expression nodes in the AST
+# Represents grouping expr nodes in the AST
 class Grouping < Expr
   attr_accessor :expression
 
@@ -65,7 +65,7 @@ class Grouping < Expr
   end
 end
 
-# Represents literal expression nodes in the AST
+# Represents literal expr nodes in the AST
 class Literal < Expr
   attr_accessor :value
 
@@ -79,7 +79,7 @@ class Literal < Expr
   end
 end
 
-# Represents unary expression nodes in the AST
+# Represents unary expr nodes in the AST
 class Unary < Expr
   attr_accessor :operator, :right
 

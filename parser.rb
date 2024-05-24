@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-require_relative 'expr'
 require_relative 'lox'
+require_relative 'expr'
+require_relative 'stmt'
 
 # Lox parser class
 class Parser
@@ -14,13 +15,36 @@ class Parser
   end
 
   def parse
-    expression
+    statements = []
+    statements.append statement until at_end?
+
+    statements
   rescue ParseError
     nil
   end
 
   def expression
     equality
+  end
+
+  def statement
+    return print_statement if match :PRINT
+
+    expression_statement
+  end
+
+  def print_statement
+    value = expression
+    consume(:SEMICOLON, "Expect ';' after value.")
+
+    Print.new value
+  end
+
+  def expression_statement
+    expr = expression
+    consume(:SEMICOLON, "Expect ';' afte expression.")
+
+    Expression.new expr
   end
 
   def equality

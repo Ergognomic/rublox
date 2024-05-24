@@ -33,12 +33,12 @@ def run(source)
   scanner = Scanner.new(source)
   tokens = scanner.scan_tokens
   parser = Parser.new(tokens)
-  expression = parser.parse
+  statements = parser.parse
 
   # Stop if there was a syntax error
   return if $had_error
 
-  $interpreter.interpret expression
+  $interpreter.interpret statements
 end
 
 def error(line, message)
@@ -57,7 +57,7 @@ end
 
 def parse_error(token, message)
   if token.type == :EOF
-    report(token.line, 'at end', message)
+    report(token.line, ' at end', message)
   else
     report(token.line, " at '#{token.lexeme}'", message)
   end

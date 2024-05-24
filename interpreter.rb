@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 require_relative 'expr'
+require_relative'stmt'
 require_relative 'runtime_error'
 require_relative 'lox'
 
 # Lox interpreter class
 class Interpreter < Visitor
-  def interpret(expr)
-    value = evaluate(expr)
-    puts stringify(value)
+  def interpret(statements)
+    statements.each { |statement| execute statement }
   rescue LoxRuntimeError => e
     runtime_error e
   end
@@ -58,6 +58,20 @@ class Interpreter < Visitor
 
   def evaluate(expr)
     expr.accept(self)
+  end
+
+  def execute(stmt)
+    stmt.accept(self)
+  end
+
+  def visit_expression_stmt(stmt)
+    evaluate stmt.expression
+    nil
+  end
+
+  def visit_print_stmt(stmt)
+    value = evaluate stmt.expression
+    puts stringify(value)
   end
 
   def visit_binary_expr(expr)
