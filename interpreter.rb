@@ -1,12 +1,18 @@
 # frozen_string_literal: true
 
 require_relative 'expr'
-require_relative'stmt'
+require_relative 'stmt'
 require_relative 'runtime_error'
 require_relative 'lox'
+require_relative 'environment'
 
 # Lox interpreter class
 class Interpreter < Visitor
+  def initialize
+    super
+    @environment = Environment.new
+  end
+
   def interpret(statements)
     statements.each { |statement| execute statement }
   rescue LoxRuntimeError => e
@@ -35,6 +41,10 @@ class Interpreter < Visitor
     end
     # Unreachable
     nil
+  end
+
+  def visit_variable_expr(expr)
+    @environment.get expr.name
   end
 
   def check_number_operand(operator, operand)
@@ -72,6 +82,18 @@ class Interpreter < Visitor
   def visit_print_stmt(stmt)
     value = evaluate stmt.expression
     puts stringify(value)
+  end
+
+  def visit_var_stmt(stmt)
+    value = evaluate(stmt.initializer) unless stmt.initializer.nil?
+    @environment.define(stmt.name.lexeme, value)
+    nil
+  end
+
+  def visit_assign_expr(expr)
+    value = evaluate expr.value
+    @environment.assign(expr.name, value)
+    value
   end
 
   def visit_binary_expr(expr)

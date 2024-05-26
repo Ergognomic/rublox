@@ -32,7 +32,7 @@ class Scanner
   end
 
   def scan_tokens
-    until @current == @source.length
+    until at_end?
       @start = @current
       scan_token
     end
@@ -96,7 +96,7 @@ class Scanner
       scan_string
     when /\d/
       scan_number
-    when /[a-zA-z_]/
+    when /[a-zA-Z_]/
       scan_identifier
     else
       error(@line, "Unexpected character: '#{c}'") unless c.match?(/\s/)

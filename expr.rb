@@ -4,6 +4,11 @@
 
 # Pseudo-interface for classes that visit the AST
 class Visitor
+  def visit_assign_expr(*)
+    warn 'runtime error: unimplemented function: visit_assign_expr'
+    exit 1
+  end
+
   def visit_binary_expr(*)
     warn 'runtime error: unimplemented function: visit_binary_expr'
     exit 1
@@ -23,6 +28,11 @@ class Visitor
     warn 'runtime error: unimplemented function: visit_unary_expr'
     exit 1
   end
+
+  def visit_variable_expr(*)
+    warn 'runtime error: unimplemented function: visit_variable_expr'
+    exit 1
+  end
 end
 
 # Pseudo virtual class for expressions
@@ -32,6 +42,21 @@ class Expr
   def accept(*)
     warn 'runtime error: unimplemented function: accept'
     exit 1
+  end
+end
+
+# Represents assign expr nodes in the AST
+class Assign < Expr
+  attr_accessor :name, :value
+
+  def initialize(name, value)
+    super
+    @name = name
+    @value = value
+  end
+
+  def accept(visitor)
+    visitor.visit_assign_expr(self)
   end
 end
 
@@ -91,5 +116,19 @@ class Unary < Expr
 
   def accept(visitor)
     visitor.visit_unary_expr(self)
+  end
+end
+
+# Represents variable expr nodes in the AST
+class Variable < Expr
+  attr_accessor :name
+
+  def initialize(name)
+    super
+    @name = name
+  end
+
+  def accept(visitor)
+    visitor.visit_variable_expr(self)
   end
 end

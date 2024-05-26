@@ -16,7 +16,7 @@ class Parser
 
   def parse
     statements = []
-    statements.append statement until at_end?
+    statements.append declaration until at_end?
 
     statements
   rescue ParseError
@@ -24,7 +24,16 @@ class Parser
   end
 
   def expression
-    equality
+    assignment
+  end
+
+  def declaration
+    return var_declaration if match :VAR
+
+    statement
+  rescue ParseError
+    synchronize
+    nil
   end
 
   def statement
@@ -40,11 +49,32 @@ class Parser
     Print.new value
   end
 
+  def var_declaration
+    name = consume(:IDENTIFIER, 'Expect variable name.')
+    initializer = expression if match(:EQUAL)
+    consume(:SEMICOLON, "Expect ';' after variable declaration.")
+
+    Var.new(name, initializer)
+  end
+
   def expression_statement
     expr = expression
-    consume(:SEMICOLON, "Expect ';' afte expression.")
+    consume(:SEMICOLON, "Expect ';' after expression.")
 
     Expression.new expr
+  end
+
+  def assignment
+    expr = equality
+    if match :EQUAL
+      equals = previous
+      value = assignment
+      return Assign.new(expr.name, value) if expr.is_a? Variable
+
+      error(equals, 'Invalid assignment target.')
+    end
+
+    expr
   end
 
   def equality
@@ -106,6 +136,7 @@ class Parser
     return Literal.new(true) if match(:TRUE)
     return Literal.new(nil) if match(:NIL)
     return Literal.new(previous.literal) if match(:NUMBER, :STRING)
+    return Variable.new(previous) if match(:IDENTIFIER)
 
     if match(:LEFT_PAREN)
       expr = expression

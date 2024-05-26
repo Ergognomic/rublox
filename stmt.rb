@@ -13,6 +13,11 @@ class Visitor
     warn 'runtime error: unimplemented function: visit_print_stmt'
     exit 1
   end
+
+  def visit_var_stmt(*)
+    warn 'runtime error: unimplemented function: visit_var_stmt'
+    exit 1
+  end
 end
 
 # Pseudo virtual class for expressions
@@ -50,5 +55,20 @@ class Print < Stmt
 
   def accept(visitor)
     visitor.visit_print_stmt(self)
+  end
+end
+
+# Represents var stmt nodes in the AST
+class Var < Stmt
+  attr_accessor :name, :initializer
+
+  def initialize(name, initializer)
+    super
+    @name = name
+    @initializer = initializer
+  end
+
+  def accept(visitor)
+    visitor.visit_var_stmt(self)
   end
 end

@@ -67,19 +67,23 @@ end
 if __FILE__ == $PROGRAM_NAME
   if ARGV.length != 1
     warn 'Usage: generate_ast <output_directory>'
+    warn '<output_directory> is typically ".\"'
     exit 64
   end
 
   output_directory = ARGV[0]
   define_ast(output_directory, 'expr', [
+               'Assign   : name, value',
                'Binary   : left, operator, right',
                'Grouping : expression',
                'Literal  : value',
-               'Unary    : operator, right'
+               'Unary    : operator, right',
+               'Variable : name'
              ])
 
   define_ast(output_directory, 'stmt', [
                'Expression : expression',
-               'Print      : expression'
+               'Print      : expression',
+               'Var        : name, initializer'
              ])
 end
