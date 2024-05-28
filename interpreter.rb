@@ -74,6 +74,22 @@ class Interpreter < Visitor
     stmt.accept(self)
   end
 
+  def execute_block(statements, environment)
+    previous = @environment
+    @environment = environment
+
+    statements.each do |statement|
+      execute(statement)
+    end
+  ensure
+    @environment = previous
+  end
+
+  def visit_block_stmt(stmt)
+    execute_block(stmt.statements, Environment.new(@environment))
+    nil
+  end
+
   def visit_expression_stmt(stmt)
     evaluate stmt.expression
     nil

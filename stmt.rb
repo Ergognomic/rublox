@@ -4,6 +4,11 @@
 
 # Pseudo-interface for classes that visit the AST
 class Visitor
+  def visit_block_stmt(*)
+    warn 'runtime error: unimplemented function: visit_block_stmt'
+    exit 1
+  end
+
   def visit_expression_stmt(*)
     warn 'runtime error: unimplemented function: visit_expression_stmt'
     exit 1
@@ -27,6 +32,20 @@ class Stmt
   def accept(*)
     warn 'runtime error: unimplemented function: accept'
     exit 1
+  end
+end
+
+# Represents block stmt nodes in the AST
+class Block < Stmt
+  attr_accessor :statements
+
+  def initialize(statements)
+    super
+    @statements = statements
+  end
+
+  def accept(visitor)
+    visitor.visit_block_stmt(self)
   end
 end
 

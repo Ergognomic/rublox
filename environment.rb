@@ -2,8 +2,9 @@
 
 # Lox environment class
 class Environment
-  def initialize
+  def initialize(enclosing = nil)
     @values = {}
+    @enclosing = enclosing
   end
 
   def define(name, value)
@@ -12,6 +13,7 @@ class Environment
 
   def get(name)
     return @values[name.lexeme] if @values.key? name.lexeme
+    return @enclosing.get(name) unless @enclosing.nil?
 
     raise LoxRuntimeError.new(name, "Undefined variable #{name.lexeme}.")
   end
@@ -21,6 +23,12 @@ class Environment
       @values[name.lexeme] = value
       return
     end
+
+    unless @enclosing.nil?
+      @enclosing.assign(name, value)
+      return
+    end
+
     raise LoxRuntimeError.new(name, "Undefined variable #{name.lexeme}.")
   end
 end

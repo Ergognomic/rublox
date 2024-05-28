@@ -38,6 +38,7 @@ class Parser
 
   def statement
     return print_statement if match :PRINT
+    return Block.new(block) if match :LEFT_BRACE
 
     expression_statement
   end
@@ -62,6 +63,14 @@ class Parser
     consume(:SEMICOLON, "Expect ';' after expression.")
 
     Expression.new expr
+  end
+
+  def block
+    statements = []
+    statements.push(declaration) while !check(:RIGHT_BRACE) && !at_end?
+    consume(:RIGHT_BRACE, "Expect '}' after block.")
+
+    statements
   end
 
   def assignment

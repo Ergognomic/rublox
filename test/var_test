@@ -1,0 +1,7 @@
+var a = 54;
+print a;        // 54
+print a = 34;   // 34
+print a;        // 34
+print a / 2;    // 17
+print b;        // Undefined variable b.
+print a;        // shouldn't run
