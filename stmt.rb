@@ -14,6 +14,11 @@ class Visitor
     exit 1
   end
 
+  def visit_if_stmt(*)
+    warn 'runtime error: unimplemented function: visit_if_stmt'
+    exit 1
+  end
+
   def visit_print_stmt(*)
     warn 'runtime error: unimplemented function: visit_print_stmt'
     exit 1
@@ -60,6 +65,22 @@ class Expression < Stmt
 
   def accept(visitor)
     visitor.visit_expression_stmt(self)
+  end
+end
+
+# Represents if stmt nodes in the AST
+class If < Stmt
+  attr_accessor :condition, :then_branch, :else_branch
+
+  def initialize(condition, then_branch, else_branch)
+    super
+    @condition = condition
+    @then_branch = then_branch
+    @else_branch = else_branch
+  end
+
+  def accept(visitor)
+    visitor.visit_if_stmt(self)
   end
 end
 

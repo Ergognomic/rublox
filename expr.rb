@@ -24,6 +24,11 @@ class Visitor
     exit 1
   end
 
+  def visit_logical_expr(*)
+    warn 'runtime error: unimplemented function: visit_logical_expr'
+    exit 1
+  end
+
   def visit_unary_expr(*)
     warn 'runtime error: unimplemented function: visit_unary_expr'
     exit 1
@@ -101,6 +106,22 @@ class Literal < Expr
 
   def accept(visitor)
     visitor.visit_literal_expr(self)
+  end
+end
+
+# Represents logical expr nodes in the AST
+class Logical < Expr
+  attr_accessor :left, :operator, :right
+
+  def initialize(left, operator, right)
+    super
+    @left = left
+    @operator = operator
+    @right = right
+  end
+
+  def accept(visitor)
+    visitor.visit_logical_expr(self)
   end
 end
 

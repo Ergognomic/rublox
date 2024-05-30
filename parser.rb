@@ -37,10 +37,21 @@ class Parser
   end
 
   def statement
+    return if_statement if match :IF
     return print_statement if match :PRINT
     return Block.new(block) if match :LEFT_BRACE
 
     expression_statement
+  end
+
+  def if_statement
+    consume(:LEFT_PAREN, "Expect '(' after 'if'.")
+    condition = expression
+    consume(:RIGHT_PAREN, "Expect ')' after if condition.")
+    then_branch = statement
+    else_branch = statement if match :ELSE
+
+    If.new(condition, then_branch, else_branch)
   end
 
   def print_statement
@@ -74,13 +85,35 @@ class Parser
   end
 
   def assignment
-    expr = equality
+    expr = logical_or
     if match :EQUAL
       equals = previous
       value = assignment
       return Assign.new(expr.name, value) if expr.is_a? Variable
 
       error(equals, 'Invalid assignment target.')
+    end
+
+    expr
+  end
+
+  def logical_or
+    expr = logical_and
+    while match :OR
+      operator = previous
+      right = logical_and
+      expr = Logical.new(expr, operator, right)
+    end
+
+    expr
+  end
+
+  def logical_and
+    expr = equality
+    while match :AND
+      operator = previous
+      right = equality
+      expr = Logical.new(expr, operator, right)
     end
 
     expr

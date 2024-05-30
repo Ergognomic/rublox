@@ -77,6 +77,7 @@ if __FILE__ == $PROGRAM_NAME
                'Binary   : left, operator, right',
                'Grouping : expression',
                'Literal  : value',
+               'Logical  : left, operator, right',
                'Unary    : operator, right',
                'Variable : name'
              ])
@@ -84,6 +85,7 @@ if __FILE__ == $PROGRAM_NAME
   define_ast(output_directory, 'stmt', [
                'Block      : statements',
                'Expression : expression',
+               'If         : condition, then_branch, else_branch',
                'Print      : expression',
                'Var        : name, initializer'
              ])
