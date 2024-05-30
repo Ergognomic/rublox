@@ -1,0 +1,9 @@
+// Should print from 0 to 6765 (Fib(0) to Fib(20))
+var a = 0;
+var temp;
+
+for (var b = 1; a < 10000; b = temp + b) {
+  print a;
+  temp = a;
+  a = b;
+}

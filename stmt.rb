@@ -28,6 +28,11 @@ class Visitor
     warn 'runtime error: unimplemented function: visit_var_stmt'
     exit 1
   end
+
+  def visit_while_stmt(*)
+    warn 'runtime error: unimplemented function: visit_while_stmt'
+    exit 1
+  end
 end
 
 # Pseudo virtual class for expressions
@@ -110,5 +115,20 @@ class Var < Stmt
 
   def accept(visitor)
     visitor.visit_var_stmt(self)
+  end
+end
+
+# Represents while stmt nodes in the AST
+class While < Stmt
+  attr_accessor :condition, :body
+
+  def initialize(condition, body)
+    super
+    @condition = condition
+    @body = body
+  end
+
+  def accept(visitor)
+    visitor.visit_while_stmt(self)
   end
 end

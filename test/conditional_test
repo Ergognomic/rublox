@@ -1,0 +1,3 @@
+if (true) print "true";     // true
+var a = true;
+if (!a) print "true";       // prints nothing

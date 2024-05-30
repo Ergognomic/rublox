@@ -37,11 +37,35 @@ class Parser
   end
 
   def statement
+    return for_statement if match :FOR
     return if_statement if match :IF
     return print_statement if match :PRINT
+    return while_statement if match :WHILE
     return Block.new(block) if match :LEFT_BRACE
 
     expression_statement
+  end
+
+  def for_statement
+    consume(:LEFT_PAREN, "Expect '(' after 'for'.")
+    initializer = if match :SEMICOLON
+                    nil
+                  elsif match :VAR
+                    var_declaration
+                  else
+                    expression_statement
+                  end
+    condition = expression unless check :SEMICOLON
+    consume(:SEMICOLON, "Expect ';' after loop condition.")
+    increment = expression unless check :RIGHT_PAREN
+    consume(:RIGHT_PAREN, "Expect ')' after for clause.")
+    body = statement
+    body = Block.new([body, Expression.new(increment)]) unless increment.nil?
+    condition = Literal.new(true) if condition.nil?
+    body = While.new(condition, body)
+    body = Block.new([initializer, body]) unless initializer.nil?
+
+    body
   end
 
   def if_statement
@@ -67,6 +91,15 @@ class Parser
     consume(:SEMICOLON, "Expect ';' after variable declaration.")
 
     Var.new(name, initializer)
+  end
+
+  def while_statement
+    consume(:LEFT_PAREN, "Expect '(' after 'while'.")
+    condition = expression
+    consume(:RIGHT_PAREN, "Expect ')' after condition.")
+    body = statement
+
+    While.new(condition, body)
   end
 
   def expression_statement
