@@ -14,6 +14,11 @@ class Visitor
     exit 1
   end
 
+  def visit_call_expr(*)
+    warn 'runtime error: unimplemented function: visit_call_expr'
+    exit 1
+  end
+
   def visit_grouping_expr(*)
     warn 'runtime error: unimplemented function: visit_grouping_expr'
     exit 1
@@ -78,6 +83,22 @@ class Binary < Expr
 
   def accept(visitor)
     visitor.visit_binary_expr(self)
+  end
+end
+
+# Represents call expr nodes in the AST
+class Call < Expr
+  attr_accessor :callee, :paren, :arguments
+
+  def initialize(callee, paren, arguments)
+    super
+    @callee = callee
+    @paren = paren
+    @arguments = arguments
+  end
+
+  def accept(visitor)
+    visitor.visit_call_expr(self)
   end
 end
 

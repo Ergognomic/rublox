@@ -75,6 +75,7 @@ if __FILE__ == $PROGRAM_NAME
   define_ast(output_directory, 'expr', [
                'Assign   : name, value',
                'Binary   : left, operator, right',
+               'Call     : callee, paren, arguments',
                'Grouping : expression',
                'Literal  : value',
                'Logical  : left, operator, right',

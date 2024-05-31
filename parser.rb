@@ -16,7 +16,7 @@ class Parser
 
   def parse
     statements = []
-    statements.append declaration until at_end?
+    statements << declaration until at_end?
 
     statements
   rescue ParseError
@@ -111,7 +111,7 @@ class Parser
 
   def block
     statements = []
-    statements.push(declaration) while !check(:RIGHT_BRACE) && !at_end?
+    statements << declaration while !check(:RIGHT_BRACE) && !at_end?
     consume(:RIGHT_BRACE, "Expect '}' after block.")
 
     statements
@@ -203,7 +203,32 @@ class Parser
       return Unary.new(operator, right)
     end
 
-    primary
+    call
+  end
+
+  def finish_call(callee)
+    arguments = []
+    unless check :RIGHT_PAREN
+      loop do
+        error(peek, "Can't have more than 255 arguments") if arguments.size >= 255
+        arguments << expression
+        break unless match :COMMA
+      end
+    end
+    paren = consume(:RIGHT_PAREN, "Expect ')' after arguments.")
+
+    Call.new(callee, paren, arguments)
+  end
+
+  def call
+    expr = primary
+    loop do
+      break unless match :LEFT_PAREN
+
+      expr = finish_call expr
+    end
+
+    expr
   end
 
   def primary

@@ -36,7 +36,7 @@ class Scanner
       @start = @current
       scan_token
     end
-    @tokens.push(Token.new(:EOF, '', nil, @line))
+    @tokens << Token.new(:EOF, '', nil, @line)
   end
 
   def at_end?
@@ -50,7 +50,7 @@ class Scanner
 
   def add_token(type, literal = nil)
     text = @source[@start...@current]
-    @tokens.push(Token.new(type, text, literal, @line))
+    @tokens << Token.new(type, text, literal, @line)
   end
 
   def scan_token

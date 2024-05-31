@@ -149,7 +149,7 @@ class Interpreter < Visitor
     case expr.operator.type
     when :PLUS
       raise LoxRuntimeError.new(expr.operator, 'Operands must be two numbers or two strings.') unless
-      (left.is_a?(String) && right.is_a?(String)) || (left.is_a?(Float) && right.is_a?(Float))
+        (left.is_a?(String) && right.is_a?(String)) || (left.is_a?(Float) && right.is_a?(Float))
 
       return left + right
     when :MINUS
@@ -180,5 +180,17 @@ class Interpreter < Visitor
     end
     # Unreachable
     nil
+  end
+
+  def visit_call_expr(expr)
+    callee = evaluate expr.callee
+    arguments = expr.arguments.map { |argument| evaluate(argument) }
+    raise LoxRuntimeError.new(expr.paren, 'Can only call functions and classes') unless callee.is_a Callable
+
+    function = callee
+    raise LoxRuntimeError.new(expr.paren, "Expected #{function.arity} arguments but got #{arguments.size}.") unless
+      arguments.size == function.arity
+
+    function.call(self, arguments)
   end
 end
