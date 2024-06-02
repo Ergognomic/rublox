@@ -86,6 +86,7 @@ if __FILE__ == $PROGRAM_NAME
   define_ast(output_directory, 'stmt', [
                'Block      : statements',
                'Expression : expression',
+               'Function   : name, params, body',
                'If         : condition, then_branch, else_branch',
                'Print      : expression',
                'Var        : name, initializer',

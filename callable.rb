@@ -2,6 +2,8 @@
 
 # Lox callable function abstract class
 class Callable
+  def initialize(*) end
+
   def call(*)
     raise NotImplementedError, 'unimplemented function: call'
   end

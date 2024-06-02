@@ -28,6 +28,7 @@ class Parser
   end
 
   def declaration
+    return function 'function' if match :FUN
     return var_declaration if match :VAR
 
     statement
@@ -107,6 +108,24 @@ class Parser
     consume(:SEMICOLON, "Expect ';' after expression.")
 
     Expression.new expr
+  end
+
+  def function(kind)
+    name = consume(:IDENTIFIER, "Expect #{kind} name.")
+    consume(:LEFT_PAREN, "Expect '(' after #{kind} name.")
+    parameters = []
+    unless check :RIGHT_PAREN
+      loop do
+        error(peek, "Can't have more than 255 parameters.") if parameters.size >= 255
+        parameters << consume(:IDENTIFIER, 'Expect parameter name.')
+        break unless match :COMMA
+      end
+    end
+    consume(:RIGHT_PAREN, "Expect ')' after parameters.")
+    consume(:LEFT_BRACE, "Expect '{' before #{kind} body.")
+    body = block
+
+    Function.new(name, parameters, body)
   end
 
   def block

@@ -14,6 +14,11 @@ class Visitor
     exit 1
   end
 
+  def visit_function_stmt(*)
+    warn 'runtime error: unimplemented function: visit_function_stmt'
+    exit 1
+  end
+
   def visit_if_stmt(*)
     warn 'runtime error: unimplemented function: visit_if_stmt'
     exit 1
@@ -70,6 +75,22 @@ class Expression < Stmt
 
   def accept(visitor)
     visitor.visit_expression_stmt(self)
+  end
+end
+
+# Represents function stmt nodes in the AST
+class Function < Stmt
+  attr_accessor :name, :params, :body
+
+  def initialize(name, params, body)
+    super
+    @name = name
+    @params = params
+    @body = body
+  end
+
+  def accept(visitor)
+    visitor.visit_function_stmt(self)
   end
 end
 

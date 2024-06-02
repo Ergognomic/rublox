@@ -5,12 +5,18 @@ require_relative 'stmt'
 require_relative 'runtime_error'
 require_relative 'lox'
 require_relative 'environment'
+require_relative 'clock'
+require_relative 'lox_function'
 
 # Lox interpreter class
 class Interpreter < Visitor
+  attr_accessor :globals, :environment
+
   def initialize
     super
-    @environment = Environment.new
+    @globals = Environment.new
+    @environment = @globals
+    @globals.define('clock', Clock.new)
   end
 
   def interpret(statements)
@@ -108,6 +114,13 @@ class Interpreter < Visitor
     nil
   end
 
+  def visit_function_stmt(stmt)
+    function = LoxFunction.new(stmt)
+    @environment.define(stmt.name.lexeme, function)
+
+    nil
+  end
+
   def visit_if_stmt(stmt)
     if truthy? evaluate(stmt.condition)
       execute stmt.then_branch
@@ -185,7 +198,7 @@ class Interpreter < Visitor
   def visit_call_expr(expr)
     callee = evaluate expr.callee
     arguments = expr.arguments.map { |argument| evaluate(argument) }
-    raise LoxRuntimeError.new(expr.paren, 'Can only call functions and classes') unless callee.is_a Callable
+    raise LoxRuntimeError.new(expr.paren, 'Can only call functions and classes') unless callee.is_a? Callable
 
     function = callee
     raise LoxRuntimeError.new(expr.paren, "Expected #{function.arity} arguments but got #{arguments.size}.") unless
