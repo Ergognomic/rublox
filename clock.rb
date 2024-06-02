@@ -2,7 +2,7 @@
 
 require_relative 'callable'
 
-# Lox clock() function class
+# Lox clock() native function
 class Clock < Callable
   def call
     Time.now.to_f

@@ -5,18 +5,19 @@ require_relative 'environment'
 
 # Lox function class
 class LoxFunction < Callable
-  def initialize(declaration)
+  def initialize(declaration, closure)
     super
     @declaration = declaration
+    @closure = closure
   end
 
   def call(interpreter, arguments)
-    environment = Environment.new(interpreter.globals)
-    @declaration.params.size.times do |p|
-      environment.define(@declaration.params[p].lexeme, arguments[p])
-    end
+    environment = Environment.new(@closure)
+    @declaration.params.size.times { |p| environment.define(@declaration.params[p].lexeme, arguments[p]) }
     interpreter.execute_block(@declaration.body, environment)
-
+  rescue LoxReturn => ret
+    ret.value
+  else
     nil
   end
 

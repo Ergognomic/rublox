@@ -7,6 +7,7 @@ require_relative 'lox'
 require_relative 'environment'
 require_relative 'clock'
 require_relative 'lox_function'
+require_relative 'return'
 
 # Lox interpreter class
 class Interpreter < Visitor
@@ -115,7 +116,7 @@ class Interpreter < Visitor
   end
 
   def visit_function_stmt(stmt)
-    function = LoxFunction.new(stmt)
+    function = LoxFunction.new(stmt, @environment)
     @environment.define(stmt.name.lexeme, function)
 
     nil
@@ -134,6 +135,12 @@ class Interpreter < Visitor
   def visit_print_stmt(stmt)
     value = evaluate stmt.expression
     puts stringify(value)
+  end
+
+  def visit_return_stmt(stmt)
+    value = evaluate stmt.value unless stmt.value.nil?
+
+    raise LoxReturn.new(value)
   end
 
   def visit_var_stmt(stmt)

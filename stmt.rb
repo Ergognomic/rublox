@@ -29,6 +29,11 @@ class Visitor
     exit 1
   end
 
+  def visit_return_stmt(*)
+    warn 'runtime error: unimplemented function: visit_return_stmt'
+    exit 1
+  end
+
   def visit_var_stmt(*)
     warn 'runtime error: unimplemented function: visit_var_stmt'
     exit 1
@@ -121,6 +126,21 @@ class Print < Stmt
 
   def accept(visitor)
     visitor.visit_print_stmt(self)
+  end
+end
+
+# Represents return stmt nodes in the AST
+class Return < Stmt
+  attr_accessor :keyword, :value
+
+  def initialize(keyword, value)
+    super
+    @keyword = keyword
+    @value = value
+  end
+
+  def accept(visitor)
+    visitor.visit_return_stmt(self)
   end
 end
 

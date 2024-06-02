@@ -89,6 +89,7 @@ if __FILE__ == $PROGRAM_NAME
                'Function   : name, params, body',
                'If         : condition, then_branch, else_branch',
                'Print      : expression',
+               'Return     : keyword, value',
                'Var        : name, initializer',
                'While      : condition, body'
              ])
